@@ -137,24 +137,7 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
   }
 
   if (!output.empty()) {
-    // ninja sets stdout and stderr of subprocesses to a pipe, to be able to
-    // check if the output is empty. Some compilers, e.g. clang, check
-    // isatty(stderr) to decide if they should print colored output.
-    // To make it possible to use colored output with ninja, subprocesses should
-    // be run with a flag that forces them to always print color escape codes.
-    // To make sure these escape codes don't show up in a file if ninja's output
-    // is piped to a file, ninja strips ansi escape codes again if it's not
-    // writing to a |smart_terminal_|.
-    // (Launching subprocesses in pseudo ttys doesn't work because there are
-    // only a few hundred available on some systems, and ninja can launch
-    // thousands of parallel compile commands.)
-    // TODO: There should be a flag to disable escape code stripping.
-    string final_output;
-    if (!printer_.is_smart_terminal())
-      final_output = StripAnsiEscapeCodes(output);
-    else
-      final_output = output;
-    printer_.PrintOnNewLine(final_output);
+    printer_.PrintOnNewLine(output);
   }
 }
 
